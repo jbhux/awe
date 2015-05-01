@@ -29,7 +29,9 @@ public class MainActivity extends Activity {
     private BluetoothAdapter myBluetoothAdapter;
     private Set<BluetoothDevice> pairedDevices;
     private ListView myListView;
+    private ListView myPairedView;
     private ArrayAdapter<String> BTArrayAdapter;
+    private ArrayAdapter<String> BTPairedArray;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,6 +80,13 @@ public class MainActivity extends Activity {
                     list(v);
                 }
             });
+            
+            myPairedView = (ListView)findViewById(R.id.listView2);
+
+            BTPairedArray = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1);
+            myPairedView.setAdapter(BTPairedArray);
+            
+            //--------------------------------------------------------------
 
             findBtn = (Button)findViewById(R.id.search);
             findBtn.setOnClickListener(new OnClickListener() {
@@ -129,7 +138,7 @@ public class MainActivity extends Activity {
 
         // put it's one to the adapter
         for(BluetoothDevice device : pairedDevices)
-            BTArrayAdapter.add(device.getName()+ "\n" + device.getAddress());
+            BTPairedArray.add(device.getName()+ "\n" + device.getAddress());
 
         Toast.makeText(getApplicationContext(),"Show Paired Devices",
                 Toast.LENGTH_SHORT).show();
@@ -180,7 +189,3 @@ public class MainActivity extends Activity {
 
 }
 
-//public class MainActivity extends ActionBarActivity {
-
-
-//}
