@@ -15,6 +15,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
@@ -109,6 +110,17 @@ public class MainActivity extends Activity {
             // create the arrayAdapter that contains the BTDevices, and set it to the ListView
             BTArrayAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1);
             myListView.setAdapter(BTArrayAdapter);
+
+            // ----------- On List Click -------------------------
+            myListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                    System.err.println(position);
+                    String name =  BTArrayAdapter.getItem(position);
+                    System.err.println(name);
+                }
+            });
+
         }
     }
 

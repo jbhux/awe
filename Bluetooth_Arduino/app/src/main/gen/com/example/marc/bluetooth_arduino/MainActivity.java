@@ -1,13 +1,16 @@
 package com.example.marc.bluetooth_arduino;
 
-import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
+import android.bluetooth.BluetoothSocket;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+
 import java.util.Set;
+import java.util.UUID;
+
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.view.View;
@@ -32,6 +35,9 @@ public class MainActivity extends Activity {
     private ListView myPairedView;
     private ArrayAdapter<String> BTArrayAdapter;
     private ArrayAdapter<String> BTPairedArray;
+    private BluetoothSocket socket;
+    private UUID uuid = UUID.fromString("a60f35f0-b93a-11de-8a39-08002009c666");
+    
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -156,6 +162,9 @@ public class MainActivity extends Activity {
                 BTArrayAdapter.add(device.getName() + "\n" + device.getAddress());
                 BTArrayAdapter.notifyDataSetChanged();
             }
+            if(BluetoothDevice.ACTION_ACL_CONNECTED.equals(action)) { // if arduino is connected
+            	// send data to arduino 
+            }
         }
     };
 
@@ -172,6 +181,12 @@ public class MainActivity extends Activity {
         }
     }
 
+    public void connect(View view) {
+    	
+    	
+    	registerReceiver(bReceiver, new IntentFilter(BluetoothDevice.ACTION_ACL_CONNECTED));
+    }
+
     public void off(View view){
         myBluetoothAdapter.disable();
         text.setText("Status: Disconnected");
@@ -186,6 +201,5 @@ public class MainActivity extends Activity {
         super.onDestroy();
         unregisterReceiver(bReceiver);
     }
-
 }
 

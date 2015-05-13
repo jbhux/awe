@@ -2,9 +2,8 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/Bluetooth_Arduino.iml" filepath="$PROJECT_DIR$/Bluetooth_Arduino.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/bt_arduino.iml" filepath="$PROJECT_DIR$/bt_arduino.iml" />
     </modules>
   </component>
 </project>
-
