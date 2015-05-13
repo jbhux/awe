@@ -13,6 +13,7 @@ import java.util.UUID;
 
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.provider.Settings;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.AdapterView;
@@ -117,7 +118,9 @@ public class MainActivity extends Activity {
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                     System.err.println(position);
                     String name =  BTArrayAdapter.getItem(position);
+                    String[] nameST = name.split("\n");
                     System.err.println(name);
+                    System.err.println(nameST[1]);
                 }
             });
 
