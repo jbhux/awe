@@ -1,5 +1,5 @@
-C:\Users\Jan\workspace\awe\bt_arduino\app\build\intermediates\classes\debug
-C:\Users\Jan\workspace\awe\bt_arduino\app\build\intermediates\pre-dexed\debug\support-annotations-22.1.1-d7ee689f07bb9503f848539b17aeb3816cf1cf0c.jar
-C:\Users\Jan\workspace\awe\bt_arduino\app\build\intermediates\pre-dexed\debug\internal_impl-22.1.1-c3f2025d7c6cc2aba9c4d665ff597f43fdb0b531.jar
-C:\Users\Jan\workspace\awe\bt_arduino\app\build\intermediates\pre-dexed\debug\classes-9d7f5700737b73a4d7858167d236680871f245d1.jar
-C:\Users\Jan\workspace\awe\bt_arduino\app\build\intermediates\pre-dexed\debug\classes-986661b224a2974b3b472750d0d87c09a4cae747.jar
+C:\Users\marc\Documents\FH\6.sem(2015)\awe\awe-bluetooth\awe\bt_arduino\app\build\intermediates\classes\debug
+C:\Users\marc\Documents\FH\6.sem(2015)\awe\awe-bluetooth\awe\bt_arduino\app\build\intermediates\pre-dexed\debug\support-annotations-22.1.1-c70d5446258e89ba537b8fb2ac679bea5fa6dec5.jar
+C:\Users\marc\Documents\FH\6.sem(2015)\awe\awe-bluetooth\awe\bt_arduino\app\build\intermediates\pre-dexed\debug\internal_impl-22.1.1-c70a4965347aa9abdeabb03227ce48aec793b386.jar
+C:\Users\marc\Documents\FH\6.sem(2015)\awe\awe-bluetooth\awe\bt_arduino\app\build\intermediates\pre-dexed\debug\classes-5dd33bbc12c99add965b05af9e2835cf38cd99d8.jar
+C:\Users\marc\Documents\FH\6.sem(2015)\awe\awe-bluetooth\awe\bt_arduino\app\build\intermediates\pre-dexed\debug\classes-f01d81e1c4bd69081b6ed175d973b9ca856b44f4.jar
