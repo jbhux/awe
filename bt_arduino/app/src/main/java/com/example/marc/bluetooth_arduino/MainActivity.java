@@ -219,7 +219,8 @@ public class MainActivity extends Activity {  //implements OnItemClickListener
                 System.err.println("Device is connected");
                 try {
                     OutputStream dest = mmSocket.getOutputStream();
-                    byte[] data= new byte[16];
+                    String start = "$$$";
+                    byte[] data = start.getBytes();
                     dest.write(data);
                     System.err.println("send data");
 
