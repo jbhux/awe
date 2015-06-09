@@ -1,6 +1,7 @@
 package com.example.marc.bluetooth_arduino;
 
 import android.os.Bundle;
+import android.os.Message;
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
@@ -17,7 +18,6 @@ import java.util.UUID;
 
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.os.Message;
 import android.view.View;
 import android.os.Handler;
 import android.view.View.OnClickListener;
@@ -47,21 +47,7 @@ public class MainActivity extends Activity {  //implements OnItemClickListener
     private BluetoothSocket mmSocket = null;
     private BluetoothDevice mmDevice = null;
 
-    Handler mHandler = new Handler() {
-        @Override
-        public void handleMessage(Message msg) {
-            byte[] writeBuf = (byte[]) msg.obj;
-            int begin = (int)msg.arg1;
-            int end = (int)msg.arg2;
-
-            switch(msg.what) {
-                case 1:
-                    String writeMessage = new String(writeBuf);
-                    writeMessage = writeMessage.substring(begin, end);
-                    break;
-            }
-        }
-    };
+    BroadcastReceiver bReceiver = new MYBroadcastReceiver();
 
     class ONListener implements View.OnClickListener {
         public void onClick(View v) {
@@ -121,8 +107,8 @@ public class MainActivity extends Activity {  //implements OnItemClickListener
             registerReceiver(bReceiver, new IntentFilter(BluetoothDevice.ACTION_ACL_CONNECTED));
 
             // create the data transfer thread
-            ConnectedThread myconnected = new ConnectedThread(mmSocket);
-            myconnected.start();
+            ConnectedThread mConnected = new ConnectedThread(mmSocket);
+            mConnected.start();
             System.err.println("Device is ready for data transmission");
         }
     }
@@ -195,7 +181,6 @@ public class MainActivity extends Activity {  //implements OnItemClickListener
 
         }
     }
-
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if(requestCode == REQUEST_ENABLE_BT){
             if(myBluetoothAdapter.isEnabled()) {
@@ -205,14 +190,11 @@ public class MainActivity extends Activity {  //implements OnItemClickListener
             }
         }
     }
-    BroadcastReceiver bReceiver = new MYBroadcastReceiver();
-
     @Override
     protected void onDestroy() {
         super.onDestroy();
         unregisterReceiver(bReceiver);
     }
-
     private class ConnectThread extends Thread {
         public ConnectThread(BluetoothDevice device) {
             final UUID MY_UUID = UUID.fromString("00001101-0000-1000-8000-00805f9b34fb");
@@ -240,42 +222,30 @@ public class MainActivity extends Activity {  //implements OnItemClickListener
             } catch (IOException e) { }
         }
     }
-
     private class ConnectedThread extends Thread {
-        private final InputStream mmInStream;
         private final OutputStream mmOutStream;
         public ConnectedThread(BluetoothSocket socket) {
             mmSocket = socket;
-            InputStream tmpIn = null;
             OutputStream tmpOut = null;
             try {
-                tmpIn = socket.getInputStream();
                 tmpOut = socket.getOutputStream();
             } catch (IOException e) { }
-            mmInStream = tmpIn;
             mmOutStream = tmpOut;
         }
         public void run() {
-            byte[] buffer = new byte[1024];
-            int begin = 0;
-            int bytes = 0;
             while (true) {
                 try {
-                    bytes += mmInStream.read(buffer, bytes, buffer.length - bytes);
-                    for(int i = begin; i < bytes; i++) {
-                        if(buffer[i] == "#".getBytes()[0]) {
-                            mHandler.obtainMessage(1, begin, i, buffer).sendToTarget();
-                            begin = i + 1;
-                            if(i == bytes - 1) {
-                                bytes = 0;
-                                begin = 0;
-                            }
-                        }
-                    }
+                    OutputStream dest = mmSocket.getOutputStream();
+                    String start = "$$$";
+                    byte[] data = start.getBytes();
+                    dest.write(data);
+                    System.err.println("send data");
+
                 } catch (IOException e) {
-                    break;
+                    e.printStackTrace();
                 }
-            }
+                System.err.println("Socket ID: " + mmSocket);
+                }
         }
         public void write(byte[] bytes) {
             try {
