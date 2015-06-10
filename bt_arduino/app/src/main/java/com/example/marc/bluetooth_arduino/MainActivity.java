@@ -47,13 +47,15 @@ public class MainActivity extends Activity {  //implements OnItemClickListener
 
 
     private BluetoothSocket mmSocket = null;
-    private BluetoothDevice mmDevice = null;
+    public BluetoothDevice mmDevice = null;
+    /*
     // Message types used by the Handler
     public static final int MESSAGE_WRITE = 1;
     public static final int MESSAGE_READ = 2;
+    private final Handler mHandler = new myHandler();   */
 
     BroadcastReceiver bReceiver = new MYBroadcastReceiver();
-    private final Handler mHandler = new myHandler();
+
 
     class ONListener implements View.OnClickListener {
         public void onClick(View v) {
@@ -70,6 +72,7 @@ public class MainActivity extends Activity {  //implements OnItemClickListener
             }
         }
     }
+
     class OFFListener implements View.OnClickListener {
         public void onClick(View v) {
             myBluetoothAdapter.disable();
@@ -79,6 +82,7 @@ public class MainActivity extends Activity {  //implements OnItemClickListener
                     Toast.LENGTH_LONG).show();
         }
     }
+
     class LISTListener implements View.OnClickListener {
         public void onClick(View v) {
             // get paired devices
@@ -91,7 +95,8 @@ public class MainActivity extends Activity {  //implements OnItemClickListener
                     Toast.LENGTH_SHORT).show();
         }
     }
-    class FINDListener implements View.OnClickListener {
+
+    class SEARCHListener implements View.OnClickListener {
         public void onClick(View v) {
             if (myBluetoothAdapter.isDiscovering()) {
                  // the button is pressed when it discovers, so cancel the discovery
@@ -104,6 +109,7 @@ public class MainActivity extends Activity {  //implements OnItemClickListener
             }
         }
     }
+
     class ItemListener implements AdapterView.OnItemClickListener {
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
             System.err.println("check");
@@ -115,15 +121,11 @@ public class MainActivity extends Activity {  //implements OnItemClickListener
                 registerReceiver(bReceiver, new IntentFilter(BluetoothDevice.ACTION_ACL_CONNECTED));
 
                 // create the data transfer thread
-                ConnectedThread mConnected = new ConnectedThread(mmSocket);
-                mConnected.start();
-                System.err.println("Device is ready for data transmission");
-                String start = "$$$";
-                byte[] data = start.getBytes();
-                mConnected.write(data);
-                System.err.println("Send data with connected thread write");
+                /*ConnectedThread mConnected = new ConnectedThread(mmSocket);
+                mConnected.start();*/
         }
     }
+
     class MYBroadcastReceiver extends BroadcastReceiver {
         public void onReceive(Context context, Intent intent) {
             String action = intent.getAction();
@@ -143,27 +145,13 @@ public class MainActivity extends Activity {  //implements OnItemClickListener
                     String start = "$$$";
                     byte[] data = start.getBytes();
                     dest.write(data);
+                    dest.flush();
                     System.err.println("send data");
 
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
                 System.err.println("Socket ID: " + mmSocket);
-            }
-        }
-    }
-    class myHandler extends Handler {
-        public void handleMessage(Message msg) {
-            switch (msg.what) {
-                case MESSAGE_WRITE:
-                    //Do something when writing
-                    break;
-                case MESSAGE_READ:
-                    //Get the bytes from the msg.obj
-                    byte[] readBuf = (byte[]) msg.obj;
-                    // construct a string from the valid bytes in the buffer
-                    String readMessage = new String(readBuf, 0, msg.arg1);
-                    break;
             }
         }
     }
@@ -193,7 +181,7 @@ public class MainActivity extends Activity {  //implements OnItemClickListener
             listBtn = (Button) findViewById(R.id.paired);
             listBtn.setOnClickListener(new LISTListener());
             findBtn = (Button) findViewById(R.id.search);
-            findBtn.setOnClickListener(new FINDListener());
+            findBtn.setOnClickListener(new SEARCHListener());
             myListView = (ListView) findViewById(R.id.listView1);
             myPairedView = (ListView) findViewById(R.id.listView2);
 
@@ -207,6 +195,7 @@ public class MainActivity extends Activity {  //implements OnItemClickListener
 
         }
     }
+
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if(requestCode == REQUEST_ENABLE_BT){
             if(myBluetoothAdapter.isEnabled()) {
@@ -221,6 +210,8 @@ public class MainActivity extends Activity {  //implements OnItemClickListener
         super.onDestroy();
         unregisterReceiver(bReceiver);
     }
+
+    //freom android developer site
     private class ConnectThread extends Thread {
         public ConnectThread(BluetoothDevice device) {
             final UUID MY_UUID = UUID.fromString("00001101-0000-1000-8000-00805f9b34fb");
@@ -248,6 +239,24 @@ public class MainActivity extends Activity {  //implements OnItemClickListener
             } catch (IOException e) { }
         }
     }
+    /*
+    class myHandler extends Handler {
+        public void handleMessage(Message msg) {
+            switch (msg.what) {
+                case MESSAGE_WRITE:
+                    //Do something when writing
+                    break;
+                case MESSAGE_READ:
+                    //Get the bytes from the msg.obj
+                    byte[] readBuf = (byte[]) msg.obj;
+                    // construct a string from the valid bytes in the buffer
+                    String readMessage = new String(readBuf, 0, msg.arg1);
+                    break;
+            }
+        }
+    }
+
+    //freom android developer site
     private class ConnectedThread extends Thread {
         private final OutputStream mmOutStream;
         private final InputStream mmInStream;
@@ -288,6 +297,6 @@ public class MainActivity extends Activity {  //implements OnItemClickListener
                 mmSocket.close();
             } catch (IOException e) { }
         }
-    }
+    }*/
 }
 
