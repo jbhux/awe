@@ -44,10 +44,16 @@ public class MainActivity extends Activity {  //implements OnItemClickListener
     private ArrayAdapter<String> BTPairedArray;
     private ArrayList<BluetoothDevice> devices;
 
+
+
     private BluetoothSocket mmSocket = null;
     private BluetoothDevice mmDevice = null;
+    // Message types used by the Handler
+    public static final int MESSAGE_WRITE = 1;
+    public static final int MESSAGE_READ = 2;
 
     BroadcastReceiver bReceiver = new MYBroadcastReceiver();
+    private final Handler mHandler = new myHandler();
 
     class ONListener implements View.OnClickListener {
         public void onClick(View v) {
@@ -100,16 +106,22 @@ public class MainActivity extends Activity {  //implements OnItemClickListener
     }
     class ItemListener implements AdapterView.OnItemClickListener {
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-            BluetoothDevice selectedDevice = devices.get(position);
-            Toast.makeText(getApplicationContext(), "Device is paired", Toast.LENGTH_SHORT).show();
-            ConnectThread connect = new ConnectThread(selectedDevice);
-            connect.start();
-            registerReceiver(bReceiver, new IntentFilter(BluetoothDevice.ACTION_ACL_CONNECTED));
+            System.err.println("check");
+                BluetoothDevice selectedDevice = devices.get(position);
+                System.err.println("position: " +position);
+                Toast.makeText(getApplicationContext(), "Device is paired", Toast.LENGTH_SHORT).show();
+                ConnectThread connect = new ConnectThread(selectedDevice);
+                connect.start();
+                registerReceiver(bReceiver, new IntentFilter(BluetoothDevice.ACTION_ACL_CONNECTED));
 
-            // create the data transfer thread
-            ConnectedThread mConnected = new ConnectedThread(mmSocket);
-            mConnected.start();
-            System.err.println("Device is ready for data transmission");
+                // create the data transfer thread
+                ConnectedThread mConnected = new ConnectedThread(mmSocket);
+                mConnected.start();
+                System.err.println("Device is ready for data transmission");
+                String start = "$$$";
+                byte[] data = start.getBytes();
+                mConnected.write(data);
+                System.err.println("Send data with connected thread write");
         }
     }
     class MYBroadcastReceiver extends BroadcastReceiver {
@@ -140,7 +152,21 @@ public class MainActivity extends Activity {  //implements OnItemClickListener
             }
         }
     }
-
+    class myHandler extends Handler {
+        public void handleMessage(Message msg) {
+            switch (msg.what) {
+                case MESSAGE_WRITE:
+                    //Do something when writing
+                    break;
+                case MESSAGE_READ:
+                    //Get the bytes from the msg.obj
+                    byte[] readBuf = (byte[]) msg.obj;
+                    // construct a string from the valid bytes in the buffer
+                    String readMessage = new String(readBuf, 0, msg.arg1);
+                    break;
+            }
+        }
+    }
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -224,28 +250,33 @@ public class MainActivity extends Activity {  //implements OnItemClickListener
     }
     private class ConnectedThread extends Thread {
         private final OutputStream mmOutStream;
+        private final InputStream mmInStream;
         public ConnectedThread(BluetoothSocket socket) {
             mmSocket = socket;
             OutputStream tmpOut = null;
+            InputStream tmpIn = null;
             try {
                 tmpOut = socket.getOutputStream();
             } catch (IOException e) { }
             mmOutStream = tmpOut;
+            mmInStream = tmpIn;
         }
         public void run() {
+            byte[] buffer = new byte[1024];  // buffer store for the stream
+            int bytes; // bytes returned from read()
+
+            // Keep listening to the InputStream until an exception occurs
             while (true) {
                 try {
-                    OutputStream dest = mmSocket.getOutputStream();
-                    String start = "$$$";
-                    byte[] data = start.getBytes();
-                    dest.write(data);
-                    System.err.println("send data");
-
+                    // Read from the InputStream
+                    bytes = mmInStream.read(buffer);
+                    // Send the obtained bytes to the UI activity
+                    mHandler.obtainMessage(MESSAGE_READ, bytes, -1, buffer)
+                            .sendToTarget();
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    break;
                 }
-                System.err.println("Socket ID: " + mmSocket);
-                }
+            }
         }
         public void write(byte[] bytes) {
             try {
